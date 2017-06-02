@@ -59,7 +59,7 @@ var addButton=function(message) {
 	}
 }
 
-//gets the message (now embeded in all html gibberish) and username of person archivibg and channel name
+//gets the message with details like timestamp and person sending it, username of person archiving and channel name.
 var archiveMessage=function(buttonC) {
 	//console.log('y');
 	var allMessageInfo = buttonC.parentNode.parentNode.parentNode.parentNode;
@@ -71,6 +71,7 @@ var archiveMessage=function(buttonC) {
 	console.log('messager: '+messager+'\ntimestamp: '+timestamp+'\nmessage: '+message+'\n\narchiver: '+archiverUsername+'\n\nchannel: '+channel);
 }
 
+//stuff got too long so I am making several separate messages into one here
 var joinMessages = function(messageFragments) {
 	var messageJoined="";
 	for(var i=0; i<messageFragments.length;++i){
@@ -80,6 +81,7 @@ var joinMessages = function(messageFragments) {
 	return messageJoined.substring(0,messageJoined.length-1);
 }
 
+//utility function that removes text from between two strings
 var cropBetweenStrings = function(stringToCrop,startString,stopString) {
 	croppedString = stringToCrop;
 	stringStillThere=true;
