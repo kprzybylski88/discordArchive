@@ -1,2 +1,2 @@
 # discordArchive
-Chrome Extension for easy message archivisiation
+Chrome Extension for Discord
