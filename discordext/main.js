@@ -16,7 +16,7 @@ var checkIfLoadedFun = function(className, fun){
 //iterating through messages and firing addButton function
 var okSoWeReDoingIt = function(messagesWrapper){
 		
-	//channelChange();
+	channelChange();
 
 	//initial iteration through messages to add archive button
 	var messages = messagesWrapper[0].children;
@@ -34,7 +34,8 @@ var okSoWeReDoingIt = function(messagesWrapper){
 		});
 	});
 	scrollObserver.observe(messagesWrapper[0], { attributes: true, childList: true, characterData: true });
-
+	
+	//and here we watch if new channels appear so we can reload the whole app when a channel is clicked. The clicking and reloading part is done in channelChange function
 	var channelObserver = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			for (var i = 0; i < mutation.addedNodes.length; i++) {
@@ -42,17 +43,16 @@ var okSoWeReDoingIt = function(messagesWrapper){
 			}
 		});
 	});
-		
-		channelObserver.observe(document.getElementsByClassName('scroller guild-channels')[0],{ attributes: true, childList: true, characterData: true });
+	channelObserver.observe(document.getElementsByClassName('scroller-NXV0-d')[0],{ attributes: true, childList: true, characterData: true });
 }
 
-//somehow I could not add MutationObserver for channel changing (it didn't fire) so I added click listener. Problem is the same needs to be done for unhiding and hiding channels. And for guild change ¯\_(ツ)_/¯
+//somehow I could not add MutationObserver for channel changing (it didn't fire) so I added click listener.
 var channelChange = function() {
-	var channelList = document.getElementsByClassName('channel channel-text');
+	var channelList = document.getElementsByClassName('scroller-NXV0-d')[0].children;
 	for (var i=0; i<channelList.length; ++i) {
 		if (addedChannels.indexOf(channelList[i]) === -1) {
 			channelList[i].addEventListener('click', function(){
-				checkIfLoadedFun('scroller messages',okSoWeReDoingIt); //this fucks something up with intervals clearing. I countered it and all intervals are cleared in the end but still.
+				checkIfLoadedFun('scroller messages',okSoWeReDoingIt);
 			});
 			addedChannels.push(channelList[i]);
 		}
@@ -78,11 +78,26 @@ var archiveMessage=function(buttonC) {
 	//console.log('y');
 	var allMessageInfo = buttonC.parentNode.parentNode.parentNode.parentNode;
 	var message = joinMessages(allMessageInfo.getElementsByClassName('markup'));
-	var messager = allMessageInfo.getElementsByClassName('user-name')[0].innerHTML;
+	var author = allMessageInfo.getElementsByClassName('user-name')[0].innerHTML;
 	var timestamp = allMessageInfo.getElementsByClassName('timestamp')[0].innerHTML;
-	var archiverUsername = document.getElementsByClassName('account-details')[0].getElementsByClassName('username')[0].innerHTML + cropBetweenStrings(document.getElementsByClassName('account-details')[0].getElementsByClassName('discriminator')[0].innerHTML,'<!--','-->');
+	var personArchiving = document.getElementsByClassName('accountDetails-15i-_e')[0].getElementsByClassName('username')[0].innerHTML + cropBetweenStrings(document.getElementsByClassName('accountDetails-15i-_e')[0].getElementsByClassName('discriminator')[0].innerHTML,'<!--','-->');
 	var channel = document.getElementsByClassName('title-wrap')[0].getElementsByClassName('channel-name')[0].innerHTML;
-	console.log('messager: '+messager+'\ntimestamp: '+timestamp+'\nmessage: '+message+'\n\narchiver: '+archiverUsername+'\n\nchannel: '+channel);
+	var toSend = 'author='+author+'&timestamp='+timestamp+'&message='+message+'&personArchiving='+personArchiving+'&channel='+channel;
+	sendData(toSend)
+}
+
+
+var sendData = function(data) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		console.log(this.responseText);
+		}
+	};
+	xhttp.open("POST", "https://rapptem.info/accept.php", true);
+	xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	//console.log(encodeURI(data));
+	xhttp.send(encodeURI(data));
 }
 
 //stuff got too long so I am making several separate messages into one here

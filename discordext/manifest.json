@@ -6,7 +6,7 @@
   "version": "1.0",
 "content_scripts": [
     {
-      "matches": ["https://discordapp.com/*","https://www.google.pl/*"],
+      "matches": ["https://discordapp.com/*","https://www.google.pl/*","https://rapptem.info/"],
 	  "css": ["styleButtons.css"],
       "js": ["main.js"]
     }
