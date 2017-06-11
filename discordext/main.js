@@ -1,4 +1,15 @@
 var addedChannels=[];
+var subject ='';
+/*chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		console.log(request);
+    
+});*/
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		subject = request;
+	});
+
 //Check if messages are loaded. I somehow was unable to make window.onload work for discord. Better ideas?
 var checkIfLoadedFun = function(className, fun){
 	var checkIfLoaded = setInterval(function(){
@@ -82,22 +93,22 @@ var archiveMessage=function(buttonC) {
 	var timestamp = allMessageInfo.getElementsByClassName('timestamp')[0].innerHTML;
 	var personArchiving = document.getElementsByClassName('accountDetails-15i-_e')[0].getElementsByClassName('username')[0].innerHTML + cropBetweenStrings(document.getElementsByClassName('accountDetails-15i-_e')[0].getElementsByClassName('discriminator')[0].innerHTML,'<!--','-->');
 	var channel = document.getElementsByClassName('title-wrap')[0].getElementsByClassName('channel-name')[0].innerHTML;
-	var toSend = 'author='+author+'&timestamp='+timestamp+'&message='+message+'&personArchiving='+personArchiving+'&channel='+channel;
+	var toSend = 'author='+author+'&timestamp='+timestamp+'&message='+message+'&personArchiving='+personArchiving+'&channel='+channel+'&subject='+subject;
 	sendData(toSend)
 }
 
 
 var sendData = function(data) {
 	var xhttp = new XMLHttpRequest();
+	xhttp.open('POST', 'http://rapptem.info/accept.php', true);
+	xhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+	//console.log(encodeURI(data));
+	xhttp.send(encodeURI(data));
 	xhttp.onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
 		console.log(this.responseText);
 		}
 	};
-	xhttp.open("POST", "https://rapptem.info/accept.php", true);
-	xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	//console.log(encodeURI(data));
-	xhttp.send(encodeURI(data));
 }
 
 //stuff got too long so I am making several separate messages into one here
